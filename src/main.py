@@ -9,7 +9,7 @@ You will implement the functions in recommender.py:
 - recommend_songs
 """
 
-from recommender import load_songs, recommend_songs
+from src.recommender import load_songs, recommend_songs
 
 # Max possible score from score_song (genre+mood+energy+acousticness)
 MAX_SCORE = 4.5

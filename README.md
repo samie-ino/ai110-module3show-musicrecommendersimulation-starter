@@ -91,6 +91,65 @@ A song that matches the user's genre and mood, sits at the exact target energy l
 
 ---
 
+## Sample Output — Default Pop/Happy Profile
+
+Terminal output from running `python -m src.main` with the default lofi/chill user profile (energy 0.4, acousticness 0.75):
+
+```
+Loaded 18 songs from catalog.
+
+============================================================
+  Top Recommendations
+============================================================
+
+  #1  Midnight Coding  —  LoRoom
+       Genre: lofi  |  Mood: chill
+       Score: 4.48 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.98) (song=0.42, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.71)
+
+  #2  Library Rain  —  Paper Lanterns
+       Genre: lofi  |  Mood: chill
+       Score: 4.45 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.95) (song=0.35, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.86)
+
+  #3  Focus Flow  —  LoRoom
+       Genre: lofi  |  Mood: focused
+       Score: 3.50 / 4.5  [################----]
+       Why this song:
+         • genre match (+2.0)
+         • energy similarity (+1.00) (song=0.40, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.78)
+
+  #4  Spacewalk Thoughts  —  Orbit Bloom
+       Genre: ambient  |  Mood: chill
+       Score: 2.38 / 4.5  [###########---------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.88) (song=0.28, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.92)
+
+  #5  Coffee Shop Stories  —  Slow Stereo
+       Genre: jazz  |  Mood: relaxed
+       Score: 1.47 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.97) (song=0.37, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.89)
+
+============================================================
+```
+
+The results match expectations: the two lofi/chill songs rank 1st and 2nd with near-perfect scores (4.48 and 4.45). The third slot goes to another lofi song that lost the mood-match bonus. The ASCII score bar makes it easy to spot the large gap between the top three and the rest.
+
+---
+
 ## Getting Started
 
 ### Setup
@@ -279,3 +338,51 @@ A few sentences about what you learned:
 - How did building this change how you think about real music recommenders
 - Where do you think human judgment still matters, even if the model seems "smart"
 
+
+## 10. Terminal Output
+============================================================
+  Top Recommendations
+============================================================
+
+  #1  Midnight Coding  —  LoRoom
+       Genre: lofi  |  Mood: chill
+       Score: 4.48 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.98) (song=0.42, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.71)
+
+  #2  Library Rain  —  Paper Lanterns
+       Genre: lofi  |  Mood: chill
+       Score: 4.45 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.95) (song=0.35, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.86)
+
+  #3  Focus Flow  —  LoRoom
+       Genre: lofi  |  Mood: focused
+       Score: 3.50 / 4.5  [################----]
+       Why this song:
+         • genre match (+2.0)
+         • energy similarity (+1.00) (song=0.40, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.78)
+
+  #4  Spacewalk Thoughts  —  Orbit Bloom
+       Genre: ambient  |  Mood: chill
+       Score: 2.38 / 4.5  [###########---------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.88) (song=0.28, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.92)
+
+  #5  Coffee Shop Stories  —  Slow Stereo
+       Genre: jazz  |  Mood: relaxed
+       Score: 1.47 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.97) (song=0.37, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.89)
+
+============================================================
