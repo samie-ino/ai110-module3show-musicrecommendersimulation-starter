@@ -91,6 +91,336 @@ A song that matches the user's genre and mood, sits at the exact target energy l
 
 ---
 
+## Multi-Profile Evaluation — Six User Profiles
+
+The recommender was run against three distinct listener types and three adversarial edge cases. Terminal output for each is captured below.
+
+---
+
+### Profile 1 — High-Energy Pop
+
+A workout listener who wants loud, fast, non-acoustic pop.
+
+```
+============================================================
+  Profile 1 — High-Energy Pop
+============================================================
+
+  #1  Sunrise City  —  Neon Echo
+       Genre: pop  |  Mood: happy
+       Score: 4.42 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.92) (song=0.82, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.18)
+
+  #2  Gym Hero  —  Max Pulse
+       Genre: pop  |  Mood: intense
+       Score: 3.47 / 4.5  [###############-----]
+       Why this song:
+         • genre match (+2.0)
+         • energy similarity (+0.97) (song=0.93, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.05)
+
+  #3  Rooftop Lights  —  Indigo Parade
+       Genre: indie pop  |  Mood: happy
+       Score: 2.36 / 4.5  [##########----------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.86) (song=0.76, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.35)
+
+  #4  Storm Runner  —  Voltline
+       Genre: rock  |  Mood: intense
+       Score: 1.49 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.99) (song=0.91, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.10)
+
+  #5  Neon Pulse  —  Greywave
+       Genre: electronic  |  Mood: energetic
+       Score: 1.48 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.98) (song=0.88, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.08)
+
+============================================================
+```
+
+**Observation:** Sunrise City (#1) is a near-perfect match at 4.42. The genre bonus (+2.0) dominates — Gym Hero (#2) scores only 3.47 despite a nearly identical energy match because it tagged "intense" instead of "happy." The bottom three results (#3-5) all miss the genre bonus, so despite strong energy alignment they cannot climb higher.
+
+---
+
+### Profile 2 — Chill Lofi
+
+A late-night study listener who wants slow, acoustic beats.
+
+```
+============================================================
+  Profile 2 — Chill Lofi
+============================================================
+
+  #1  Midnight Coding  —  LoRoom
+       Genre: lofi  |  Mood: chill
+       Score: 4.48 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.98) (song=0.42, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.71)
+
+  #2  Library Rain  —  Paper Lanterns
+       Genre: lofi  |  Mood: chill
+       Score: 4.45 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.95) (song=0.35, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.86)
+
+  #3  Focus Flow  —  LoRoom
+       Genre: lofi  |  Mood: focused
+       Score: 3.50 / 4.5  [################----]
+       Why this song:
+         • genre match (+2.0)
+         • energy similarity (+1.00) (song=0.40, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.78)
+
+  #4  Spacewalk Thoughts  —  Orbit Bloom
+       Genre: ambient  |  Mood: chill
+       Score: 2.38 / 4.5  [###########---------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.88) (song=0.28, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.92)
+
+  #5  Coffee Shop Stories  —  Slow Stereo
+       Genre: jazz  |  Mood: relaxed
+       Score: 1.47 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.97) (song=0.37, target=0.40)
+         • acoustic match (+0.5) (acousticness=0.89)
+
+============================================================
+```
+
+**Observation:** Both lofi/chill songs hit near-perfect scores. The clear drop from #3 (3.50) to #4 (2.38) shows the mood bonus is the deciding separator once genre is established.
+
+---
+
+### Profile 3 — Deep Intense Rock
+
+A headbanger who wants aggressive, electric guitar at high energy.
+
+```
+============================================================
+  Profile 3 — Deep Intense Rock
+============================================================
+
+  #1  Storm Runner  —  Voltline
+       Genre: rock  |  Mood: intense
+       Score: 4.49 / 4.5  [####################]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.99) (song=0.91, target=0.92)
+         • non-acoustic match (+0.5) (acousticness=0.10)
+
+  #2  Gym Hero  —  Max Pulse
+       Genre: pop  |  Mood: intense
+       Score: 2.49 / 4.5  [###########---------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.99) (song=0.93, target=0.92)
+         • non-acoustic match (+0.5) (acousticness=0.05)
+
+  #3  Crown of Thunder  —  Ironveil
+       Genre: metal  |  Mood: angry
+       Score: 1.46 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.96) (song=0.96, target=0.92)
+         • non-acoustic match (+0.5) (acousticness=0.04)
+
+  #4  Neon Pulse  —  Greywave
+       Genre: electronic  |  Mood: energetic
+       Score: 1.46 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.96) (song=0.88, target=0.92)
+         • non-acoustic match (+0.5) (acousticness=0.08)
+
+  #5  Sunrise City  —  Neon Echo
+       Genre: pop  |  Mood: happy
+       Score: 1.40 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.90) (song=0.82, target=0.92)
+         • non-acoustic match (+0.5) (acousticness=0.18)
+
+============================================================
+```
+
+**Observation:** Storm Runner is the only rock/intense song, so it scores a near-perfect 4.49 and then there is a huge cliff — #2 drops to 2.49. The bottom three slots (#3-5) are essentially tied around 1.46, showing the catalog has only one true rock song and the system cannot differentiate much below #1.
+
+---
+
+### Edge Case A — Conflicting Energy vs. Sad Mood
+
+**Design intent:** energy=0.9 implies a club banger; mood="sad" implies a slow ballad. No song in the catalog is tagged "sad." This tests whether the system honors the emotional intent or ignores it in favor of numeric energy.
+
+```
+============================================================
+  Edge Case A — Conflicting Energy vs. Sad Mood
+============================================================
+
+  #1  Gym Hero  —  Max Pulse
+       Genre: pop  |  Mood: intense
+       Score: 3.47 / 4.5  [###############-----]
+       Why this song:
+         • genre match (+2.0)
+         • energy similarity (+0.97) (song=0.93, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.05)
+
+  #2  Sunrise City  —  Neon Echo
+       Genre: pop  |  Mood: happy
+       Score: 3.42 / 4.5  [###############-----]
+       Why this song:
+         • genre match (+2.0)
+         • energy similarity (+0.92) (song=0.82, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.18)
+
+  #3  Storm Runner  —  Voltline
+       Genre: rock  |  Mood: intense
+       Score: 1.49 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.99) (song=0.91, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.10)
+
+  #4  Neon Pulse  —  Greywave
+       Genre: electronic  |  Mood: energetic
+       Score: 1.48 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.98) (song=0.88, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.08)
+
+  #5  Crown of Thunder  —  Ironveil
+       Genre: metal  |  Mood: angry
+       Score: 1.44 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.94) (song=0.96, target=0.90)
+         • non-acoustic match (+0.5) (acousticness=0.04)
+
+============================================================
+```
+
+**What this reveals:** The system was "tricked." A user who says they want sad music gets Gym Hero and Sunrise City — upbeat, high-energy pop — because energy=0.9 fires strongly and mood="sad" never matches anything (it earns 0 mood points for every song). The mood label is silently ignored, and the numeric energy score takes over. This is a real-world failure mode: the system optimizes what it can measure (energy as a float) and discards what it cannot match (a mood label not in the catalog).
+
+---
+
+### Edge Case B — Genre Not In Catalog (jazz-pop)
+
+**Design intent:** The user wants "jazz-pop," which does not exist as a genre in `songs.csv`. The genre bonus (+2.0) never fires, capping every song's max score at 2.5.
+
+```
+============================================================
+  Edge Case B — Genre Not In Catalog (jazz-pop)
+============================================================
+
+  #1  Rooftop Lights  —  Indigo Parade
+       Genre: indie pop  |  Mood: happy
+       Score: 2.39 / 4.5  [###########---------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.89) (song=0.76, target=0.65)
+         • non-acoustic match (+0.5) (acousticness=0.35)
+
+  #2  Sunrise City  —  Neon Echo
+       Genre: pop  |  Mood: happy
+       Score: 2.33 / 4.5  [##########----------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.83) (song=0.82, target=0.65)
+         • non-acoustic match (+0.5) (acousticness=0.18)
+
+  #3  Mango Sunset  —  Coral Tide
+       Genre: reggae  |  Mood: uplifting
+       Score: 1.47 / 4.5  [#######-------------]
+       Why this song:
+         • energy similarity (+0.97) (song=0.62, target=0.65)
+         • non-acoustic match (+0.5) (acousticness=0.58)
+
+  #4  Concrete Gospel  —  MadLib Jones
+       Genre: hip-hop  |  Mood: nostalgic
+       Score: 1.42 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.92) (song=0.73, target=0.65)
+         • non-acoustic match (+0.5) (acousticness=0.15)
+
+  #5  Night Drive Loop  —  Neon Echo
+       Genre: synthwave  |  Mood: moody
+       Score: 1.40 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.90) (song=0.75, target=0.65)
+         • non-acoustic match (+0.5) (acousticness=0.22)
+
+============================================================
+```
+
+**What this reveals:** With no genre match available, the system silently falls back on mood+energy+acousticness. The top two results (2.39 and 2.33) are reasonable happy/pop-adjacent picks, but the margin over #3 (1.47) is tiny. Tiny energy differences are now deciding the ranking. A catalog gap directly weakens recommendation confidence and the results feel arbitrary below #2.
+
+---
+
+### Edge Case C — Perfectly Neutral / All Mid-Range
+
+**Design intent:** Every preference is set to the middle value (energy=0.5, acousticness=0.5 — right on the threshold). The genre is "ambient" (only one song in the catalog). This tests whether the system surfaces a reasonable list or collapses into a near-random ranking.
+
+```
+============================================================
+  Edge Case C — Perfectly Neutral / All Mid-Range
+============================================================
+
+  #1  Spacewalk Thoughts  —  Orbit Bloom
+       Genre: ambient  |  Mood: chill
+       Score: 3.78 / 4.5  [#################---]
+       Why this song:
+         • genre match (+2.0)
+         • mood match (+1.0)
+         • energy similarity (+0.78) (song=0.28, target=0.50)
+
+  #2  Midnight Coding  —  LoRoom
+       Genre: lofi  |  Mood: chill
+       Score: 1.92 / 4.5  [#########-----------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.92) (song=0.42, target=0.50)
+
+  #3  Library Rain  —  Paper Lanterns
+       Genre: lofi  |  Mood: chill
+       Score: 1.85 / 4.5  [########------------]
+       Why this song:
+         • mood match (+1.0)
+         • energy similarity (+0.85) (song=0.35, target=0.50)
+
+  #4  Mango Sunset  —  Coral Tide
+       Genre: reggae  |  Mood: uplifting
+       Score: 1.38 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.88) (song=0.62, target=0.50)
+         • non-acoustic match (+0.5) (acousticness=0.58)
+
+  #5  Concrete Gospel  —  MadLib Jones
+       Genre: hip-hop  |  Mood: nostalgic
+       Score: 1.27 / 4.5  [######--------------]
+       Why this song:
+         • energy similarity (+0.77) (song=0.73, target=0.50)
+         • non-acoustic match (+0.5) (acousticness=0.15)
+
+============================================================
+```
+
+**What this reveals:** Spacewalk Thoughts scores 3.78 and wins by a wide margin simply because it is the only ambient song — it collects the genre bonus (+2.0) and mood bonus (+1.0) while its low energy (0.28 vs target 0.50) only costs 0.22 points. The acousticness=0.50 profile sits exactly on the threshold (0.6), so the acoustic/non-acoustic bonus never fires for Spacewalk Thoughts. Below #1, the list devolves to whatever songs happened to land closest to energy=0.50 — mood labels do the remaining sorting. The system produces a coherent-looking top result but the bottom four are essentially noise for this user.
+
+---
+
 ## Sample Output — Default Pop/Happy Profile
 
 Terminal output from running `python -m src.main` with the default lofi/chill user profile (energy 0.4, acousticness 0.75):
