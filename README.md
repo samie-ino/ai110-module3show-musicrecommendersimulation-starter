@@ -29,20 +29,30 @@ Some prompts to answer:
 
 You can include a simple diagram or bullet list if helpful.
 
-Each song in the system will use energy, mood, genre, acousticness, and valence. What will be stored in the user profile will be thier energy level, favorite mood, favorite genre, and whether they prefer acoustic music or not.
+Each song in the system uses genre, mood, energy, and acousticness. The user profile stores their favorite genre, favorite mood, target energy level, and whether they prefer acoustic music.
 
-• Energy (most important) — measure the gap between the song's energy and   the user's preferred energy. The smaller the gap, the more points it earns.
-Mood — if the song's mood exactly matches the user's favorite mood, it earns full points. If not, it earns nothing.
-• Genre — same rule as mood. An exact match earns full points, a mismatch earns nothing.
-• Acousticness — if the user likes acoustic music, songs that are more acoustic earn more points. If the user prefers non-acoustic, the opposite applies.
-• Valence (least important) — we infer how emotionally positive the user probably wants a song to be based on their mood preference. A happy mood preference expects a bright, positive song. A moody preference expects something darker. The closer the song is to that expectation, the more points it earns.
+- **Genre** — an exact match earns full points. A mismatch earns nothing.
+- **Mood** — same rule as genre. An exact match earns full points. A mismatch earns nothing.
+- **Energy** — measures the gap between the song's energy and the user's preferred energy. The smaller the gap, the more points it earns (up to 1.0).
+- **Acousticness** — a bonus is awarded when the song's acoustic character matches the user's preference (threshold: acousticness ≥ 0.6).
 
-We never pick songs by hand. Instead, we let the scores do the deciding automatically.After every song in the catalog has been scored, we line them all up from highest score to lowest. The songs at the top earned their spot purely by how well they matched what the user told us they want. We then take however many top songs the user asked for and those become the recommendations.Because the score is built from the user's own profile, the result is personal to them. Two different users running the same system against the same catalog will get different recommendations, because their profiles are different and so their scores will be different.
+Note: valence is stored on each song but is not yet part of the scoring formula. It is listed as a future improvement in the Limitations section.
+
+We never pick songs by hand. Instead, we let the scores do the deciding automatically. After every song in the catalog has been scored, we line them all up from highest score to lowest. The songs at the top earned their spot purely by how well they matched what the user told us they want. We then take however many top songs the user asked for, and those become the recommendations. Because the score is built from the user's own profile, the result is personal to them. Two different users running the same system against the same catalog will get different recommendations, because their profiles are different and so their scores will be different.
+
+The scoring function (`score_song`) returns both a numeric score and a list of human-readable reasons that explain each point contribution, for example:
+
+```
+genre match (+2.0)
+mood match (+1.0)
+energy similarity (+0.98) (song=0.42, target=0.40)
+acoustic match (+0.5) (acousticness=0.90)
+```
 
 This means the system is:
 1. Automatic — no human decides what gets recommended
 2. Consistent — the same user with the same profile always gets the same result
-3. Explainable — we can always point to exactly why a song ranked where it did, because every score is traceable back to the five checks we ran
+3. Explainable — we can always point to exactly why a song ranked where it did, because every score is traceable back to the four checks we ran
 
 ---
 
