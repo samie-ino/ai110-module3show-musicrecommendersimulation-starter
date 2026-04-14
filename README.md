@@ -46,6 +46,41 @@ This means the system is:
 
 ---
 
+### Algorithm Recipe
+
+Each song receives a score built from four weighted checks, applied in this order:
+
+- **Genre match — +2.0 points**
+  Exact match only. Partial credit is not given.
+
+- **Mood match — +1.0 points**
+  Exact match only. Partial credit is not given.
+
+- **Energy similarity — +0.0 to 1.0 points**
+  Calculated as `1.0 − |song.energy − target_energy|`. Rewards closeness continuously — the nearer the song's energy is to the user's target, the higher the score.
+
+- **Acousticness preference — +0.5 points**
+  Bonus awarded if the user prefers acoustic music and the song is acoustic (acousticness ≥ 0.6), or if the user prefers non-acoustic and the song is not.
+
+- **Maximum possible score — 4.5 points**
+  Earned when all four signals align perfectly.
+
+A song that matches the user's genre and mood, sits at the exact target energy level, and matches their production-style preference will score 4.5. A song that misses on all four checks will score near 0.
+
+---
+
+### Potential Biases
+
+- **Genre dominance.** At +2.0, genre carries twice the weight of mood and more than twice the max energy points. A great song from a slightly different genre (e.g., "indie pop" vs. "pop") scores at most 2.5 even if it matches every other preference perfectly — while a poor energy match in the right genre still scores 2.0+ automatically. The system may bury cross-genre gems.
+
+- **Mood is all-or-nothing.** A "chill" user and a song tagged "relaxed" are arguably very close, but the system treats them as a complete miss (+0.0). Any labeling inconsistency in the catalog punishes the user.
+
+- **Small catalog amplifies genre bias.** With only 18 songs across 15 genres, several genres have just one representative. A user whose favorite genre appears once will have that single song boosted to the top regardless of how well its other features match.
+
+- **Valence is not yet scored.** The system description above lists valence as a preference signal, but the current recipe does not include it. Songs with emotionally mismatched valence (e.g., a dark, low-valence song recommended to a "happy" user) can still rank highly if genre and mood labels align.
+
+---
+
 ## Getting Started
 
 ### Setup
@@ -83,11 +118,21 @@ You can add more tests in `tests/test_recommender.py`.
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+**Experiment 1 — Baseline: lofi / chill user (energy 0.4, prefers acoustic)**
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+The system ranked both lofi-chill songs at the top with scores of 4.48 and 4.45, well clear of everything else. The third result, Focus Flow, was still lofi but tagged "focused" instead of "chill" — it scored 3.50 because the mood bonus was missing. This confirmed the recipe was working as intended.
+
+**Experiment 2 — Dropping the genre weight from +2.0 to +0.5**
+
+With the same lofi / chill user, lowering the genre weight closed the gap significantly. The two lofi-chill songs still led (2.98 and 2.95), but Spacewalk Thoughts — an ambient-chill song with no genre match — jumped to third place at 2.38, nearly tied with Focus Flow at 2.00. This showed that genre is the main separator in the current design. Reducing its weight lets mood and energy do more work, which can surface good cross-genre matches but also makes the results feel less targeted.
+
+**Experiment 3 — High-energy metal / angry user (energy 0.95, non-acoustic)**
+
+Crown of Thunder scored 4.49 — nearly a perfect score — and the second-place song (Gym Hero, pop/intense) was all the way back at 1.48. This revealed a concentration problem: when a user has a very specific genre, all the points pile onto one song and the rest of the list is essentially random. The catalog only has one metal song, so the ranking below first place is not meaningful for this user type.
+
+**Experiment 4 — User whose favorite genre does not exist in the catalog (jazz-pop)**
+
+With no genre match available, the genre bonus never fired and the maximum any song could score was 2.5. The top result was Rooftop Lights (indie pop / happy) at 2.44, followed closely by Sunrise City (pop / happy) at 2.38. The system fell back on mood and energy similarity, which produced a reasonable result — but every song in the top five was within 1 point of each other, meaning small differences in energy level were deciding the ranking. A catalog gap directly weakened the system's confidence.
 
 ---
 
