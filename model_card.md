@@ -65,18 +65,40 @@ The most significant weakness discovered during experimentation is a **genre fil
 
 ---
 
-## 7. Evaluation  
+## 7. Evaluation
 
-How you checked whether the recommender behaved as expected. 
+Six user profiles were run against the full 18-song catalog: three listener personas designed to represent realistic use cases, and three adversarial edge cases designed to push the system into difficult territory.
 
-Prompts:  
+**Profiles tested:**
 
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
+| Profile | Genre | Mood | Energy | Acoustic |
+|---|---|---|---|---|
+| 1 — High-Energy Pop | pop | happy | 0.90 | no |
+| 2 — Chill Lofi | lofi | chill | 0.40 | yes |
+| 3 — Deep Intense Rock | rock | intense | 0.92 | no |
+| Edge A — Conflicting Sad | pop | sad | 0.90 | no |
+| Edge B — Missing Genre | jazz-pop | happy | 0.65 | no |
+| Edge C — Perfectly Neutral | ambient | chill | 0.50 | 0.50 (on threshold) |
 
-No need for numeric metrics unless you created some.
+**What I looked for:**
+
+For each profile I checked three things: (1) whether the top-ranked song was a reasonable match for that listener, (2) whether the score distribution looked healthy — a clear winner with a meaningful gap below it — and (3) whether unexpected songs appeared where they should not have.
+
+**What surprised me:**
+
+The biggest surprise was how often "Gym Hero" (pop, mood=intense) appeared for users who never asked for intense music. Profile 1 wanted pop/happy, yet Gym Hero ranked #2 with 3.47 out of 4.5, just below the correct pop/happy song Sunrise City at 4.42. Gym Hero earned those points purely from genre match (+2.0) and a near-perfect energy score (+0.97) — even though it missed the mood bonus entirely. The genre weight is heavy enough that a wrong-mood pop song still outranks every song from a different genre, no matter how well those songs match in energy.
+
+In Edge Case A (the user who said they wanted "sad" music), Gym Hero actually climbed to #1. Because no song in the catalog has mood="sad", the mood bonus was zero for every song. The system could not reward any song for being emotionally correct, so it fell back entirely on genre and energy — and Gym Hero's energy (0.93) happened to sit slightly closer to the target (0.90) than Sunrise City's (0.82). A user asking for slow, melancholy songs received a high-energy workout track. The system did not detect the contradiction; it just optimized the numbers it had.
+
+The second surprise was the sharp cliff in Profile 3 (rock). Storm Runner scored 4.49 and the next song dropped all the way to 2.49 — a gap of exactly two points, which is the size of the genre bonus. The catalog has exactly one rock song. That made position #1 a foregone conclusion before the algorithm even ran. Positions #2 through #5 were decided by mood and energy among songs that shared no genre with the user, making those slots feel arbitrary.
+
+The third surprise was Edge Case B (jazz-pop, a genre not in the catalog). With the genre bonus permanently at zero, the maximum any song could score was 2.5. The top five results clustered between 2.39 and 1.40 — all within one point of each other — with tiny energy differences deciding the order. The recommendations looked plausible on the surface but were fragile: shifting a song's energy by 0.05 could swap its position by two or three ranks.
+
+**Comparisons and simple tests:**
+
+A weight-reduction experiment (genre dropped from +2.0 to +0.5) confirmed that genre is the main separator in the current design. With lower genre weight, cross-genre songs with strong energy matches climbed significantly and the "Gym Hero problem" for Profile 1 shrank. However, results felt less targeted for users with niche taste profiles. The original weights produce more consistent and expected results for this catalog size.
+
+The primary evaluation method was reading the reasoning bullets printed for each recommendation. Because every score is fully explained — for example, `genre match (+2.0); energy similarity (+0.97)` — mismatches like "this user wanted happy music but received intense" were immediately visible without any additional tooling.
 
 ---
 
