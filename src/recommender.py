@@ -82,11 +82,13 @@ class Recommender:
         self.songs = songs
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
+        """Return the top-k songs ranked by score for the given user profile."""
         scored = [(song, score_song_oop(song, user)[0]) for song in self.songs]
         scored.sort(key=lambda x: x[1], reverse=True)
         return [song for song, _ in scored[:k]]
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
+        """Return a human-readable explanation of why a song was recommended to a user."""
         _, reasons = score_song_oop(song, user)
         if not reasons:
             return f"'{song.title}' is a general match for your taste."
