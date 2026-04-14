@@ -533,6 +533,17 @@ Crown of Thunder scored 4.49 — nearly a perfect score — and the second-place
 
 With no genre match available, the genre bonus never fired and the maximum any song could score was 2.5. The top result was Rooftop Lights (indie pop / happy) at 2.44, followed closely by Sunrise City (pop / happy) at 2.38. The system fell back on mood and energy similarity, which produced a reasonable result — but every song in the top five was within 1 point of each other, meaning small differences in energy level were deciding the ranking. A catalog gap directly weakened the system's confidence.
 
+**Experiment 5 — Weight shift: double energy importance, halve genre importance (not applied to code)**
+
+This was a hypothetical test run without changing the main scoring code. The question: what if energy similarity was worth +0.0–2.0 (doubled) and genre was only worth +1.0 (halved), while keeping the max score at 4.5?
+
+Simulated results showed:
+- Songs without a genre match climbed significantly — Rooftop Lights (indie pop) rose from 2.36 to 3.22 for a pop user, nearly matching Gym Hero.
+- The "huge cliff" effect in Profile 3 (rock) shrank — Gym Hero jumped from 2.49 to 3.48 purely on energy proximity.
+- The conflicting energy/mood edge case got worse: with energy worth twice as much, the numeric signal drowned out mood even more completely.
+
+**Conclusion:** The change made recommendations more "vibe-accurate" (rewarding songs that feel right energetically) but less genre-loyal. For users with niche genres or mood-driven preferences, halving genre made the results feel less targeted. The original weights — where genre anchors the recommendation — produce more consistent and expected results for this small catalog.
+
 ---
 
 ## Limitations and Risks
