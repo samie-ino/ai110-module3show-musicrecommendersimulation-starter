@@ -11,7 +11,7 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
+GrooveFit 1.0 is a rule-based music recommender that scores every song in an 18-song catalog against a user's taste profile and returns the top 5 matches. It uses four signals — genre, mood, energy level, and acoustic preference — to assign each song a score out of 4.5. Every recommendation includes a plain-English breakdown showing exactly which signals fired and how many points each one contributed. The project was built to explore how simple scoring rules can produce realistic-feeling recommendations, and to make the biases in those rules easy to observe and explain.
 
 ---
 
@@ -548,15 +548,11 @@ Simulated results showed:
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
-
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+- **Tiny catalog.** With 18 songs across 15 genres, most genres have exactly one representative. The system cannot recommend diverse results for users with niche tastes — it runs out of genre matches almost immediately.
+- **No understanding of meaning.** The system matches labels exactly. It does not know that "relaxed" and "chill" describe similar feelings, or that "indie pop" is a subgenre of "pop." Musically similar songs and genres are treated as completely unrelated.
+- **Genre dominates everything.** The genre bonus (+2.0) is 44% of the maximum score. A song with the wrong genre can never beat a mediocre song with the right genre, no matter how well it fits in energy or mood.
+- **Silent failures.** When a mood or genre is not in the catalog, the system does not warn the user. It quietly ignores the signal and returns results that look confident but may be emotionally wrong (see Edge Case A).
+- **Three features are loaded but never scored.** Tempo, valence, and danceability are stored on every song but have no effect on recommendations. The system cannot tell the difference between a user who wants fast dance music and one who wants slow background music at the same energy level.
 
 ---
 
@@ -566,164 +562,6 @@ Read and complete `model_card.md`:
 
 [**Model Card**](model_card.md)
 
-Write 1 to 2 paragraphs here about what you learned:
+This project made one thing very clear: a recommender system is only as good as its data. The scoring logic is simple and consistent, but the quality of its output depends entirely on whether the catalog covers the user's taste. When lofi/chill was the genre, the results were clean and confident. When rock was the genre, the system had one correct answer and four guesses. When the genre did not exist at all, everything felt arbitrary. The algorithm did not change between those cases — the catalog did. That is a lesson that carries over directly to real AI systems: collecting diverse, representative data is not less important than designing a good model. It is usually more important.
 
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
-
-
----
-
-## 7. `model_card_template.md`
-
-Combines reflection and model card framing from the Module 3 guidance. :contentReference[oaicite:2]{index=2}  
-
-```markdown
-# 🎧 Model Card - Music Recommender Simulation
-
-## 1. Model Name
-
-Give your recommender a name, for example:
-
-> VibeFinder 1.0
-
----
-
-## 2. Intended Use
-
-- What is this system trying to do
-- Who is it for
-
-Example:
-
-> This model suggests 3 to 5 songs from a small catalog based on a user's preferred genre, mood, and energy level. It is for classroom exploration only, not for real users.
-
----
-
-## 3. How It Works (Short Explanation)
-
-Describe your scoring logic in plain language.
-
-- What features of each song does it consider
-- What information about the user does it use
-- How does it turn those into a number
-
-Try to avoid code in this section, treat it like an explanation to a non programmer.
-
----
-
-## 4. Data
-
-Describe your dataset.
-
-- How many songs are in `data/songs.csv`
-- Did you add or remove any songs
-- What kinds of genres or moods are represented
-- Whose taste does this data mostly reflect
-
----
-
-## 5. Strengths
-
-Where does your recommender work well
-
-You can think about:
-- Situations where the top results "felt right"
-- Particular user profiles it served well
-- Simplicity or transparency benefits
-
----
-
-## 6. Limitations and Bias
-
-Where does your recommender struggle
-
-Some prompts:
-- Does it ignore some genres or moods
-- Does it treat all users as if they have the same taste shape
-- Is it biased toward high energy or one genre by default
-- How could this be unfair if used in a real product
-
----
-
-## 7. Evaluation
-
-How did you check your system
-
-Examples:
-- You tried multiple user profiles and wrote down whether the results matched your expectations
-- You compared your simulation to what a real app like Spotify or YouTube tends to recommend
-- You wrote tests for your scoring logic
-
-You do not need a numeric metric, but if you used one, explain what it measures.
-
----
-
-## 8. Future Work
-
-If you had more time, how would you improve this recommender
-
-Examples:
-
-- Add support for multiple users and "group vibe" recommendations
-- Balance diversity of songs instead of always picking the closest match
-- Use more features, like tempo ranges or lyric themes
-
----
-
-## 9. Personal Reflection
-
-A few sentences about what you learned:
-
-- What surprised you about how your system behaved
-- How did building this change how you think about real music recommenders
-- Where do you think human judgment still matters, even if the model seems "smart"
-
-
-## 10. Terminal Output
-============================================================
-  Top Recommendations
-============================================================
-
-  #1  Midnight Coding  —  LoRoom
-       Genre: lofi  |  Mood: chill
-       Score: 4.48 / 4.5  [####################]
-       Why this song:
-         • genre match (+2.0)
-         • mood match (+1.0)
-         • energy similarity (+0.98) (song=0.42, target=0.40)
-         • acoustic match (+0.5) (acousticness=0.71)
-
-  #2  Library Rain  —  Paper Lanterns
-       Genre: lofi  |  Mood: chill
-       Score: 4.45 / 4.5  [####################]
-       Why this song:
-         • genre match (+2.0)
-         • mood match (+1.0)
-         • energy similarity (+0.95) (song=0.35, target=0.40)
-         • acoustic match (+0.5) (acousticness=0.86)
-
-  #3  Focus Flow  —  LoRoom
-       Genre: lofi  |  Mood: focused
-       Score: 3.50 / 4.5  [################----]
-       Why this song:
-         • genre match (+2.0)
-         • energy similarity (+1.00) (song=0.40, target=0.40)
-         • acoustic match (+0.5) (acousticness=0.78)
-
-  #4  Spacewalk Thoughts  —  Orbit Bloom
-       Genre: ambient  |  Mood: chill
-       Score: 2.38 / 4.5  [###########---------]
-       Why this song:
-         • mood match (+1.0)
-         • energy similarity (+0.88) (song=0.28, target=0.40)
-         • acoustic match (+0.5) (acousticness=0.92)
-
-  #5  Coffee Shop Stories  —  Slow Stereo
-       Genre: jazz  |  Mood: relaxed
-       Score: 1.47 / 4.5  [#######-------------]
-       Why this song:
-         • energy similarity (+0.97) (song=0.37, target=0.40)
-         • acoustic match (+0.5) (acousticness=0.89)
-
-============================================================
+The bias question was the most eye-opening part. The genre weight (+2.0 out of 4.5) was not a deliberate design choice to favor certain users — it was a practical decision to make genre the primary signal. But that decision has a side effect: users whose favorite genre is well-represented in the catalog get noticeably better recommendations than users whose genre is rare or missing. The system does not intend to treat those users differently. It just does, as a consequence of a weight that seemed reasonable in isolation. That is what makes bias in AI systems hard to catch: it is often not the result of a bad intention, it is the result of a reasonable-seeming decision that interacts badly with uneven data.
