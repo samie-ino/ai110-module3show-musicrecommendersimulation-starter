@@ -1,65 +1,63 @@
-# 🎧 Model Card: Music Recommender Simulation
+# Model Card: Music Recommender Simulation
 
-## 1. Model Name  
+## 1. Model Name
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
-
----
-
-## 2. Intended Use  
-
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+**GrooveFit 1.0**
 
 ---
 
-## 3. How the Model Works  
+## 2. Intended Use
 
-Explain your scoring approach in simple language.  
+GrooveFit suggests songs based on a listener's genre, mood, energy level, and acoustic preference.
 
-Prompts:  
+It assumes the user can describe their taste with a single genre label, a single mood word, a number between 0 and 1 for energy, and a yes/no answer about liking acoustic music.
 
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
+This is a classroom simulation. It is meant to help students understand how simple scoring rules produce real-world recommendation patterns. It is not designed for a live music app.
 
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+**What it should NOT be used for:** Production music services, personalization at scale, or any situation where a wrong recommendation has real consequences for a user.
 
 ---
 
-## 4. Data  
+## 3. How the Model Works
 
-Describe the dataset the model uses.  
+Every song in the catalog gets a score out of 4.5 points. The top five scores become the recommendations.
 
-Prompts:  
+Here is how points are awarded:
 
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+- **Genre match (+2.0):** If the song's genre exactly matches your favorite genre, it earns 2 points. No partial credit — "indie pop" and "pop" are treated as completely different.
+- **Mood match (+1.0):** If the song's mood tag exactly matches your preferred mood, it earns 1 point.
+- **Energy similarity (+0.0 to +1.0):** The closer the song's energy is to your target energy, the more points it earns. A perfect energy match gives +1.0; being 0.5 off gives +0.5.
+- **Acoustic preference (+0.5):** If you like acoustic music and the song has high acousticness (above 0.6), it earns 0.5 points. Same bonus if you dislike acoustic music and the song is below 0.6.
 
----
-
-## 5. Strengths  
-
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The system prints a plain-English reason for every point, so you can see exactly why each song was recommended.
 
 ---
 
-## 6. Limitations and Bias 
+## 4. Data
+
+The catalog has **18 songs** spread across **15 different genres**.
+
+Each song has ten attributes: id, title, artist, genre, mood, energy, tempo (bpm), valence, danceability, and acousticness.
+
+Only four of those attributes are actually used in scoring: genre, mood, energy, and acousticness. Tempo, valence, and danceability are loaded but ignored.
+
+The catalog is small and uneven. Most genres have only one song. Lofi has three songs and pop has two — users who prefer those genres get the most reliable results. A user who prefers rock, blues, or reggae gets only one genre match in the entire catalog.
+
+No real listener data was collected. All user profiles were hand-crafted for testing. The catalog does not cover subgenres, regional styles, or newer music trends.
+
+---
+
+## 5. Strengths
+
+The system works best when a user's genre has several well-tagged songs in the catalog. Lofi/chill listeners, for example, see clean, high-confidence results because the catalog has three lofi songs and two of them also match mood=chill.
+
+Every recommendation comes with a score breakdown. A developer or student can immediately see why a song ranked where it did, which makes debugging and learning straightforward.
+
+For users whose preferences are well-represented, the top result is almost always an intuitive match. In six out of six test profiles, the #1 song was defensible given the user's stated preferences.
+
+---
+
+## 6. Limitations and Bias
 
 The most significant weakness discovered during experimentation is a **genre filter bubble**: the genre match bonus (+2.0 out of a maximum 4.5 points) accounts for 44% of the total possible score, which means the top recommendations almost always come from a single genre regardless of how well a song fits in other dimensions. This is compounded by the small, genre-diverse dataset — with 18 songs spread across 15 distinct genres, most users receive only one or two genre-matched songs before the algorithm begins surfacing poor-fit alternatives. The scoring also treats related genres as completely unrelated: a user who prefers "pop" receives zero genre credit for "indie pop" or "electronic," creating hard walls between musically similar styles that real listeners would likely enjoy together. Three song attributes — `tempo_bpm`, `valence`, and `danceability` — are loaded from the dataset but never factored into scoring, so the system cannot distinguish between a user who wants high-energy dance music and one who wants high-energy background music, even though their ideal playlists would look very different. Finally, the acousticness preference uses a binary 0.6 threshold, meaning a song at 0.59 acousticness is treated identically to a fully electric track, introducing a sharp and arbitrary cutoff that does not reflect how listeners actually perceive acoustic character on a spectrum.
 
@@ -71,14 +69,12 @@ Six user profiles were run against the full 18-song catalog: three listener pers
 
 **Profiles tested:**
 
-| Profile | Genre | Mood | Energy | Acoustic |
-|---|---|---|---|---|
-| 1 — High-Energy Pop | pop | happy | 0.90 | no |
-| 2 — Chill Lofi | lofi | chill | 0.40 | yes |
-| 3 — Deep Intense Rock | rock | intense | 0.92 | no |
-| Edge A — Conflicting Sad | pop | sad | 0.90 | no |
-| Edge B — Missing Genre | jazz-pop | happy | 0.65 | no |
-| Edge C — Perfectly Neutral | ambient | chill | 0.50 | 0.50 (on threshold) |
+- **Profile 1 — High-Energy Pop:** genre=pop, mood=happy, energy=0.90, acoustic=no
+- **Profile 2 — Chill Lofi:** genre=lofi, mood=chill, energy=0.40, acoustic=yes
+- **Profile 3 — Deep Intense Rock:** genre=rock, mood=intense, energy=0.92, acoustic=no
+- **Edge A — Conflicting Sad:** genre=pop, mood=sad, energy=0.90, acoustic=no
+- **Edge B — Missing Genre:** genre=jazz-pop, mood=happy, energy=0.65, acoustic=no
+- **Edge C — Perfectly Neutral:** genre=ambient, mood=chill, energy=0.50, acoustic=0.50 (on threshold)
 
 **What I looked for:**
 
@@ -102,25 +98,23 @@ The primary evaluation method was reading the reasoning bullets printed for each
 
 ---
 
-## 8. Future Work  
+## 8. Ideas for Improvement
 
-Ideas for how you would improve the model next.  
+**1. Add fuzzy genre matching.**
+Right now "pop" and "indie pop" are treated as completely unrelated. A real listener who likes pop would probably enjoy indie pop too. Grouping similar genres into families (like pop → pop, indie pop, synth pop) and giving partial credit for close matches would make the recommendations feel less rigid.
 
-Prompts:  
+**2. Use the ignored features.**
+Tempo, valence, and danceability are already in every song record but never affect the score. Adding them — even with small weights — would let the system tell the difference between a user who wants fast, danceable music and one who wants slow, melancholy music at the same energy level.
 
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+**3. Expand the catalog.**
+With 18 songs across 15 genres, most genres have exactly one representative. No matter how good the algorithm is, it cannot recommend diverse rock songs when only one rock song exists. Growing the catalog to at least five songs per genre would dramatically improve results for users with niche tastes.
 
 ---
 
-## 9. Personal Reflection  
+## 9. Personal Reflection
 
-A few sentences about your experience.  
+Building this simulation made it clear how much a recommender system depends on what is in its catalog — not just how smart the scoring is. I expected the algorithm to be the interesting part, but the most revealing moments came from the edge cases: a user who asked for sad music and got a workout track, or a user whose favorite genre simply did not exist in the catalog. Those failures are not really bugs in the code. They are gaps between what the data covers and what real listeners want.
 
-Prompts:  
+The thing that surprised me most was how confident the system looks even when it is wrong. The scores have decimal places, the explanations look detailed, and the top result is usually a song you could believe in. It is easy to trust the output without noticing that the mood signal was silently ignored or that the recommendations are basically tied. Real music apps have millions of songs and user feedback to smooth over these gaps. With 18 songs and no feedback loop, every weakness becomes very visible — which turned out to be the best thing about doing this as a classroom exercise.
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+I now think about recommendation engines differently. Every "because you liked X" suggestion from a real app is hiding decisions about weights, catalog coverage, and which signals to trust. This simulation showed me the skeleton underneath those decisions.
