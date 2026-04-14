@@ -113,8 +113,18 @@ With 18 songs across 15 genres, most genres have exactly one representative. No 
 
 ## 9. Personal Reflection
 
-Building this simulation made it clear how much a recommender system depends on what is in its catalog — not just how smart the scoring is. I expected the algorithm to be the interesting part, but the most revealing moments came from the edge cases: a user who asked for sad music and got a workout track, or a user whose favorite genre simply did not exist in the catalog. Those failures are not really bugs in the code. They are gaps between what the data covers and what real listeners want.
+**Biggest learning moment**
 
-The thing that surprised me most was how confident the system looks even when it is wrong. The scores have decimal places, the explanations look detailed, and the top result is usually a song you could believe in. It is easy to trust the output without noticing that the mood signal was silently ignored or that the recommendations are basically tied. Real music apps have millions of songs and user feedback to smooth over these gaps. With 18 songs and no feedback loop, every weakness becomes very visible — which turned out to be the best thing about doing this as a classroom exercise.
+My biggest learning moment was running the "sad mood" edge case. I gave the system a user who wanted sad music, and it returned a high-energy workout track as the #1 result. The code did not crash or warn me. It just silently ignored the mood and optimized the numbers it had left. That moment made the idea of "silent failures" in AI very concrete. A system can look confident and still be completely wrong about what the user actually needs.
 
-I now think about recommendation engines differently. Every "because you liked X" suggestion from a real app is hiding decisions about weights, catalog coverage, and which signals to trust. This simulation showed me the skeleton underneath those decisions.
+**How AI tools helped — and when I had to double-check**
+
+AI tools helped me move faster on the boilerplate parts of the project: setting up the data structures, writing the scoring loop, and formatting the CLI output. But I had to double-check the scoring weights myself. The AI suggested reasonable-sounding defaults, and they produced working code, but I only understood *why* genre was weighted at 2.0 after I ran the experiments and saw how heavily it dominated every result. The tool gave me working code; the experiments gave me understanding. Those are not the same thing.
+
+**What surprised me about simple algorithms feeling like recommendations**
+
+I was surprised by how much the output *looks* like a real recommendation even when the logic underneath is four simple rules. The score breakdown — "genre match (+2.0); energy similarity (+0.97)" — makes it feel thoughtful and personalized. But that explanation is just arithmetic. There is no understanding of music, no sense of what "sad" feels like, no awareness that Gym Hero is a workout song. The presentation creates the illusion of intelligence. That gap between how the output reads and what is actually happening is something I will think about every time I use a real recommendation app now.
+
+**What I would try next**
+
+If I kept working on this, I would add fuzzy genre matching first — so that "pop" and "indie pop" are treated as related instead of completely different. That single change would fix most of the cases where the system ran out of genre-matched songs and started returning irrelevant results. After that, I would add user feedback: let the user thumbs-up or thumbs-down a result, and use that signal to adjust the weights over time. That is the part that turns a scoring function into something that actually learns.
